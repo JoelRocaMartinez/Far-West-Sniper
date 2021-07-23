@@ -2,26 +2,32 @@
 
   <div id="container">
     <div id="canvasContainer">
-      <h1>Duck Sniper</h1>
+      <h1>Far West Sniper</h1>
       
       <div v-if="start" class="score">score: {{ score }}</div>
       <div v-if="start" class="timer">{{ timer }}</div>
       <div v-if="gameOver" class="finalScore">
-        <div class="title">Final Score</div>
-        <div>{{ score }}</div>
-        <ol>
+        <div class="finalScores">
+          <div class="title">Final Score</div>
+          <div>{{ score }}</div>
+        </div>
+        <div class="finalScores">
           <div>High Scores</div>
-          <li v-for="points in scores.slice(0, 10)" :key="points.id">
-            {{ points }}
-          </li>
-        </ol>
+          <ol>
+            <li v-for="points in scores.slice(0, 10)" :key="points.id">
+              {{ points }}
+            </li>
+          </ol>
+        </div>
       </div>
+      <img class="cloud1" src="../public/images/cloud.png" alt="cloud" width="200" height="100">
+      <img class="cloud2" src="../public/images/cloud.png" alt="cloud" width="200" height="100">
       <canvas 
         id="myCanvas" 
         width="500" 
         height="500"
-        @click="scorePoints"
-        v-on:click="addTime"
+        @click="addTime"
+        v-on:click="scorePoints"
         />
       <button v-if="!start" @click="startGame">New Game</button>
       <button v-if="gameOver" @click="startGame">Restart</button>
@@ -63,6 +69,7 @@ export default {
       drawTarget: "",
       drawClock: "",
       time: "",
+      test: false
     }
   },
   mounted() {
@@ -77,7 +84,6 @@ export default {
       this.countdown()
       this.drawBullsEye()
       this.scorePoints()
-      this.addTime()
       this.finishGame()
     },
     countdown() {
@@ -111,9 +117,7 @@ export default {
       this.watchY = Math.floor(Math.random() * 400 )
       const image = new Image()
       image.src = this.stopwatch
-      image.onload = () => {
-        ctx.drawImage(image, this.watchX, this.watchY, 40, 40)
-      }
+      ctx.drawImage(image, this.watchX, this.watchY, 40, 40)
     },
     addTime(e) {
       this.sx = e.offsetX
@@ -135,10 +139,12 @@ export default {
   },
   watch: {
     timer: function()  {
+      const randomTime1 = Math.floor(Math.random() * 50)
+      const randomTime2 = Math.floor(Math.random() * 50)
       if (this.timer === 0) {
         this.finishGame()
       }
-      if (this.timer === 20 || this.timer === 40) {
+      if (this.timer === randomTime1 || this.timer === randomTime2) {
         this.drawWatch()
       }
     }
@@ -149,10 +155,22 @@ export default {
 
 
 <style >
+@keyframes cloudMove {
+  0%   {background-color:red; left:0px; top:0px;}
+  25%  {background-color:yellow; left:200px; top:0px;}
+  50%  {background-color:blue; left:200px; top:200px;}
+  75%  {background-color:green; left:0px; top:200px;}
+  100% {background-color:red; left:0px; top:0px;}
+}
+
 html, body {
   margin: 0;;
   height: 100%;
   font-family: 'Press Start 2P', cursive;
+  background-image: url("../public/images/background.jpg");
+  background-position: center; 
+  background-repeat: no-repeat; 
+  background-size: cover; 
 }
 
 #container {
@@ -164,7 +182,7 @@ html, body {
 }
 
 #myCanvas {
-  border: 2px solid black;
+  border: 5px solid brown;
   background-color: #99ccff;
   cursor: crosshair;
 }
@@ -188,7 +206,7 @@ button {
   left:50%;
   top:50%;
   transform: translate(-50%, -50%);
-  margin-top: 20%;
+  margin-top: 30%;
   width: 15vh;
   height: 4vh;
   font-size: 1.5vh;
@@ -202,19 +220,46 @@ button {
 }
 
 .finalScore {
+  width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
-  flex-direction: column;
+  flex-direction: row;
   position: absolute;
   left:50%;
   top:50%;
   transform: translate(-50%, -50%);
 }
 
+.finalScores{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 .title {
   margin-bottom: 5%;
 }
 
+ol {
+  padding:0;
+}
+
+.cloud1 {
+  position: absolute;
+  left:21%;
+  top:30%;
+  transform: translate(-50%, -50%);
+  animation-name: cloudMove1;
+  animation-duration: 4s;
+}
+
+.cloud2 {
+  position: absolute;
+  left:79%;
+  top:45%;
+  transform: translate(-50%, -50%);
+}
 
 </style>
