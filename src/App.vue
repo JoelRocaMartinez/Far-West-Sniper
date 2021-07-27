@@ -20,8 +20,10 @@
           </ol>
         </div>
       </div>
-      <img class="cloud1" src="../public/images/cloud.png" alt="cloud" width="200" height="100">
-      <img class="cloud2" src="../public/images/cloud.png" alt="cloud" width="200" height="100">
+      <div v-if="!gameOver">
+        <img class="cloud1" src="../public/images/cloud.png" alt="cloud" width="200" height="100">
+        <img class="cloud2" src="../public/images/cloud.png" alt="cloud" width="200" height="100">
+      </div>
       <canvas 
         id="myCanvas" 
         width="500" 
@@ -40,7 +42,6 @@
 <script>
 import target from "../public/images/bullseye.png"
 import watch from "../public/images/stopwatch.png"
-import cloud from "../public/images/cloud.png"
 
 
 export default {
@@ -50,11 +51,10 @@ export default {
       canvas: null,
       bullsEye: target,
       stopwatch: watch,
-      cloud: cloud,
       score: 0,
       scores: [],
       start: false,
-      timer: 5,
+      timer: 60,
       gameOver: false,
       tx: 0,
       x: 0,
@@ -95,8 +95,8 @@ export default {
       const ctx = this.canvas
       this.drawTarget = setInterval(() => {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-        this.targetX = Math.floor(Math.random() * 400 )
-        this.targetY = Math.floor(Math.random() * 400 )
+        this.targetX = Math.floor(Math.random() * 450 )
+        this.targetY = Math.floor(Math.random() * 450 )
         const image = new Image()
         image.src = this.bullsEye
         image.onload = () => {
@@ -113,11 +113,13 @@ export default {
     drawWatch() {
       const ctx = this.canvas   
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-      this.watchX = Math.floor(Math.random() * 400 )
-      this.watchY = Math.floor(Math.random() * 400 )
+      this.watchX = Math.floor(Math.random() * 450 )
+      this.watchY = Math.floor(Math.random() * 450 )
       const image = new Image()
       image.src = this.stopwatch
-      ctx.drawImage(image, this.watchX, this.watchY, 40, 40)
+      image.onload = () => {
+        ctx.drawImage(image, this.watchX, this.watchY, 40, 40)
+      }
     },
     addTime(e) {
       this.sx = e.offsetX
@@ -132,7 +134,7 @@ export default {
         clearInterval(this.time)
         this.gameOver = true
         this.start = false
-        this.timer = 5
+        this.timer = 60
         this.scores.push(this.score)
         this.scores.sort((a,b) => b - a)
     }
@@ -155,12 +157,36 @@ export default {
 
 
 <style >
-@keyframes cloudMove {
-  0%   {background-color:red; left:0px; top:0px;}
-  25%  {background-color:yellow; left:200px; top:0px;}
-  50%  {background-color:blue; left:200px; top:200px;}
-  75%  {background-color:green; left:0px; top:200px;}
-  100% {background-color:red; left:0px; top:0px;}
+@keyframes cloudMove1 {
+  0% {
+    position: absolute;
+    left:21%;
+    top:30%;
+    transform: translate(-50%, -50%);
+  }
+
+  100% {
+    position: absolute;
+    left:79%;
+    top:30%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes cloudMove2 {
+  0% {
+    position: absolute;
+    left:79%;
+    top:60%;
+    transform: translate(-50%, -50%);
+  }
+
+  100% {
+    position: absolute;
+    left:21%;
+    top:60%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 html, body {
@@ -182,7 +208,7 @@ html, body {
 }
 
 #myCanvas {
-  border: 5px solid brown;
+  border: 5px solid rgb(128, 30, 30);
   background-color: #99ccff;
   cursor: crosshair;
 }
@@ -213,6 +239,10 @@ button {
   font-family: 'Press Start 2P', cursive;
 }
 
+button:hover {
+  cursor: crosshair;
+}
+
 .timer {
   position: absolute;
   right: 5%;
@@ -229,6 +259,7 @@ button {
   left:50%;
   top:50%;
   transform: translate(-50%, -50%);
+  z-index: 100;
 }
 
 .finalScores{
@@ -247,19 +278,23 @@ ol {
 }
 
 .cloud1 {
-  position: absolute;
-  left:21%;
-  top:30%;
-  transform: translate(-50%, -50%);
   animation-name: cloudMove1;
-  animation-duration: 4s;
+  animation-duration: 30s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: linear;
+  z-index: -999;
+  cursor: crosshair;
 }
 
 .cloud2 {
-  position: absolute;
-  left:79%;
-  top:45%;
-  transform: translate(-50%, -50%);
+  animation-name: cloudMove2;
+  animation-duration: 30s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: linear;
+  z-index: -998;
+  cursor: crosshair;
 }
 
 </style>
