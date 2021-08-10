@@ -14,7 +14,10 @@
         <div class="finalScores">
           <div>High Scores</div>
           <ol>
-            <li v-for="points in scores.slice(0, 10)" :key="points.id">
+            <li 
+              v-for="points in orderedScores(scores).slice(0, 10)"
+              :key="points.id"
+              >
               {{ points }}
             </li>
           </ol>
@@ -28,8 +31,7 @@
         id="myCanvas" 
         width="500" 
         height="500"
-        @click="addTime"
-        v-on:click="scorePoints"
+        @click="scorePoints"
         />
       <button v-if="!start" @click="startGame">New Game</button>
       <button v-if="gameOver" @click="startGame">Restart</button>
@@ -41,7 +43,7 @@
 
 <script>
 import target from "../public/images/bullseye.png"
-import watch from "../public/images/stopwatch.png"
+import axios from "axios"
 
 
 export default {
@@ -50,31 +52,28 @@ export default {
     return {
       canvas: null,
       bullsEye: target,
-      stopwatch: watch,
       score: 0,
       scores: [],
       start: false,
       timer: 60,
       gameOver: false,
       tx: 0,
-      x: 0,
-      y: 50,
-      x2: 500,
-      y2: 0,
       targetX: 0,
       targetY: 0,
-      watchX: 0,
-      watchY: 0,
-      sx: 0,
       drawTarget: "",
-      drawClock: "",
       time: "",
-      test: false
     }
   },
   mounted() {
     const canv = document.getElementById("myCanvas")
+    const apiURL = 'http://localhost:5050'
     this.canvas = canv.getContext("2d")
+    axios.get(apiURL).then((res) => {
+      const points = res.data.map(x => x)
+      this.scores = points
+    }).catch(error => {
+      console.log(error)
+    })
   },
   methods: {
     startGame() {
@@ -106,48 +105,36 @@ export default {
     },
     scorePoints(e) {
       this.tx = e.offsetX
-      if (this.tx >= this.targetX && this.tx <= this.targetX + 40) {
-        this.score += 10
-      }
-    },
-    drawWatch() {
-      const ctx = this.canvas   
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-      this.watchX = Math.floor(Math.random() * 450 )
-      this.watchY = Math.floor(Math.random() * 450 )
-      const image = new Image()
-      image.src = this.stopwatch
-      image.onload = () => {
-        ctx.drawImage(image, this.watchX, this.watchY, 40, 40)
-      }
-    },
-    addTime(e) {
-      this.sx = e.offsetX
-      if (this.sx >= this.watchX && this.sx <= this.watchX + 40) {
-        this.timer += 10
-      }
+        if (this.tx >= this.targetX && this.tx <= this.targetX + 40) {
+          this.score += 10
+        }
     },
     finishGame() {
+      // create a highscore
+      const apiURL = 'http://localhost:5050'
+      axios.post(apiURL, { score: this.score }).then(res => {
+        this.scores.push(res.data)
+      }).catch(error => {
+        console.log(error)
+      })
+      
       const ctx = this.canvas
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-        clearInterval(this.drawTarget)
-        clearInterval(this.time)
-        this.gameOver = true
-        this.start = false
-        this.timer = 60
-        this.scores.push(this.score)
-        this.scores.sort((a,b) => b - a)
+      clearInterval(this.drawTarget)
+      clearInterval(this.time)
+      this.gameOver = true
+      this.start = false
+      this.timer = 60
+    },
+    orderedScores(scores) {
+      console.log(scores)
+      return scores.map(x => x.score).sort((a,b) => b - a)
     }
   },
   watch: {
     timer: function()  {
-      const randomTime1 = Math.floor(Math.random() * 50)
-      const randomTime2 = Math.floor(Math.random() * 50)
       if (this.timer === 0) {
         this.finishGame()
-      }
-      if (this.timer === randomTime1 || this.timer === randomTime2) {
-        this.drawWatch()
       }
     }
   }
