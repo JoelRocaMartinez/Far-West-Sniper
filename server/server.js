@@ -27,6 +27,4 @@ app.use(express.json())
 app.use('/', highScoresRouter);
 
 
-app.listen(process.env.PORT || 5000, '0.0.0.0', () => {
-    console.log('Server is running')
-  })
+app.listen(5050., () => console.log("Server Running"))
