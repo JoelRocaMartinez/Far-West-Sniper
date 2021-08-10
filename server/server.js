@@ -28,3 +28,4 @@ app.use('/', highScoresRouter);
 
 
 app.listen(5050., () => console.log("Server Running"))
+
