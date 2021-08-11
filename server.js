@@ -32,10 +32,10 @@ const highScoresRouter = require('./server/routes/highscores')
 
 
 // step 2
-mongoose.connect(process.env.DATABASE_URL, {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-}).catch(error => handleError(error))
+})
 
 mongoose.connection.on('connected', () => {
     console.log('mongoose is connected')
