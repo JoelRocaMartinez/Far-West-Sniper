@@ -1,10 +1,11 @@
-# GET http://localhost:5050
 
-# ###
+//GET http://localhost:5050
 
-# POST http://localhost:5050
-# Content-Type: application/json
+//###
 
-# {
-#     "score": "1700"
-# }
+//POST http://localhost:5050
+//Content-Type: application/json
+
+//{
+    //"score": "1700"
+//}
