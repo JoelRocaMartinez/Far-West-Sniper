@@ -6,6 +6,7 @@ const path = require('path')
 
 const app = express()
 
+const highScoresRouter = require('./server/routes/highscores')
 
 //here we are configuring dist to serve app files
 app.use('/', serveStatic(path.join(__dirname, '/dist')))
@@ -14,6 +15,8 @@ app.use('/', serveStatic(path.join(__dirname, '/dist')))
 app.get(/.*/, function (req, res) {
     res.sendFile(path.join(__dirname, '/dist/index.html'))
 })
+
+app.use('/', highScoresRouter);
 
 mongoose.connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
