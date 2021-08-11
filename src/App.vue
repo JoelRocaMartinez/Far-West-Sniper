@@ -44,6 +44,7 @@
 <script>
 import target from "../public/images/bullseye.png"
 import axios from "axios"
+require('dotenv').config()
 
 
 export default {
@@ -66,7 +67,7 @@ export default {
   },
   mounted() {
     const canv = document.getElementById("myCanvas")
-    const apiURL = 'http://localhost:5050'
+    const apiURL = DATABASE_URL || 'http://localhost:5050'
     this.canvas = canv.getContext("2d")
     axios.get(apiURL).then((res) => {
       const points = res.data.map(x => x)
@@ -111,7 +112,7 @@ export default {
     },
     finishGame() {
       // create a highscore
-      const apiURL = 'http://localhost:5050'
+      const apiURL = DATABASE_URL || 'http://localhost:5050'
       axios.post(apiURL, { score: this.score }).then(res => {
         this.scores.push(res.data)
       }).catch(error => {
