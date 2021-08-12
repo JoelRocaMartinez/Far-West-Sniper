@@ -18,7 +18,7 @@ db.once('open', () => console.log('Connected to database'))
 
 app.use(express.json())
 app.use(cors());
-app.use(serveStatic(__dirname = '/cient/dist'))
+app.use(serveStatic(__dirname = '/dist'))
 
 
 const highScoresRouter = require('./routes/highscores')
@@ -29,4 +29,3 @@ const port = process.env.PORT || 3000
 app.listen(port, () => console.log("Server Running"))
 
 
-// https://www.youtube.com/watch?v=rUSjVri4I30
