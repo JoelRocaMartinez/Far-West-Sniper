@@ -18,11 +18,11 @@ db.once('open', () => console.log('Connected to database'))
 
 app.use(express.json())
 app.use(cors());
-app.use(serveStatic(__dirname = './dist'))
+app.use(serveStatic(__dirname + '/dist'))
 
 
 const highScoresRouter = require('./routes/highscores')
-app.use('/', highScoresRouter);
+app.use('/highscores', highScoresRouter);
 
 const port = process.env.PORT || 3000
 
