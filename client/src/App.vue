@@ -69,7 +69,6 @@ export default {
     const apiURL = 'https://far-west-sniper.herokuapp.com/highscores'
     this.canvas = canv.getContext("2d")
     axios.get(apiURL).then(res => {
-      console.log(res)
       const points = res.data.map(x => x)
       this.scores = points
     }).catch(error => {
@@ -129,7 +128,6 @@ export default {
         // create a highscore
         const apiURL = 'https://far-west-sniper.herokuapp.com/highscores'
         axios.post(apiURL, { score: this.score }).then(res => {
-          console.log("post:", res)
           this.scores.push(res.data)
         }).catch(error => {
           console.log(error)
