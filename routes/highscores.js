@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const HighScore = require('../models/highscore')
+const path = require('path')
+const HighScore = require(path.join(__dirname, '../models/highscore'))
 
 // get all highscores
 router.get('/', async (req, res) => {
@@ -18,14 +19,9 @@ router.post('/', async (req, res) => {
         score: req.body.score
     })
 
-    console.log('score:', score)
-
     try {
         const newScore = await score.save()
         res.status(201).json(newScore)
-
-        console.log('newScore:', newScore)
-
     } catch (err) {
         res.status(400).json({ message: err.message })
     }

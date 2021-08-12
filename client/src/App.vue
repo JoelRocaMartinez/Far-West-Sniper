@@ -44,7 +44,6 @@
 <script>
 import target from "../public/images/bullseye.png"
 import axios from "axios"
-require('dotenv').config()
 
 
 export default {
@@ -63,12 +62,11 @@ export default {
       targetY: 0,
       drawTarget: "",
       time: "",
-      secretURL: DATABASE_URL
     }
   },
   mounted() {
     const canv = document.getElementById("myCanvas")
-    const apiURL = this.secretURL || 'http://localhost:5050'
+    const apiURL = 'https://far-west-sniper.herokuapp.com'
     this.canvas = canv.getContext("2d")
     axios.get(apiURL).then((res) => {
       const points = res.data.map(x => x)
@@ -112,14 +110,6 @@ export default {
         }
     },
     finishGame() {
-      // create a highscore
-      const apiURL = this.secretURL || 'http://localhost:5050'
-      axios.post(apiURL, { score: this.score }).then(res => {
-        this.scores.push(res.data)
-      }).catch(error => {
-        console.log(error)
-      })
-      
       const ctx = this.canvas
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
       clearInterval(this.drawTarget)
@@ -129,13 +119,19 @@ export default {
       this.timer = 60
     },
     orderedScores(scores) {
-      console.log(scores)
       return scores.map(x => x.score).sort((a,b) => b - a)
     }
   },
   watch: {
     timer: function()  {
       if (this.timer === 0) {
+        // create a highscore
+        const apiURL = 'https://far-west-sniper.herokuapp.com'
+        axios.post(apiURL, { score: this.score }).then(res => {
+          this.scores.push(res.data)
+        }).catch(error => {
+          console.log(error)
+        })
         this.finishGame()
       }
     }

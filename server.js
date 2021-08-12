@@ -1,73 +1,32 @@
 require('dotenv').config()
-const express = require('express')
-const serveStatic = require('serve-static')
-const mongoose = require('mongoose')
-const path = require('path')
-
+const express = require("express")
 const app = express()
+const cors = require('cors')
+const path = require('path')
+const serveStatic = require('serve-static')
 
-const highScoresRouter = require('./server/routes/highscores')
-
-//here we are configuring dist to serve app files
-app.use('/', serveStatic(path.join(__dirname, './dist')))
-
-// this * route is to serve project on different page routes except root `/`
-app.get(/.*/, function (req, res) {
-    res.sendFile(path.join(__dirname, './dist/index.html'))
-})
-
-app.use('/', highScoresRouter);
-
+const mongoose = require('mongoose')
+//connection to db
 mongoose.connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-    
-mongoose.connection.on('connected', () => {
-    console.log('mongoose is connected')
-})
-
-const port = process.env.PORT || 8080
-app.listen(port)
-console.log(`app is listening on port: ${port}`)
+const db = mongoose.connection
+db.on('error', (error) => console.log(error))
+db.once('open', () => console.log('Connected to database'))
 
 
-
-// require('dotenv').config()
-// const express = require('express')
-// const mongoose = require('mongoose')
-// const path = require('path')
+app.use(express.json())
+app.use(cors());
+app.use(serveStatic(__dirname = '/cient/dist'))
 
 
-// // step 1
-// const app = express()
-// const PORT = process.env.PORT || 8080 
+const highScoresRouter = require('./routes/highscores')
+app.use('/', highScoresRouter);
+
+const port = process.env.PORT || 3000
+
+app.listen(port, () => console.log("Server Running"))
 
 
-// const highScoresRouter = require('./server/routes/highscores')
-
-
-// // step 2
-// mongoose.connect(process.env.DATABASE_URL, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-// })
-
-// mongoose.connection.on('connected', () => {
-//     console.log('mongoose is connected')
-// })
-
-// // data parsing
-// app.use(express.json())
-// app.use(express.urlencoded({ extended: false }))
-
-// // routes
-// app.use('/', highScoresRouter)
-
-
-// //step 3
-// if(process.env.NODE_ENV === 'production') {
-//     app.use(express.static('dist'))
-// }
-
-// app.listen(PORT, console.log(`server is starting at ${PORT}`))
+// https://www.youtube.com/watch?v=rUSjVri4I30
